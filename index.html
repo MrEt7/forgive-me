@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Barışalım mı? 😊</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
+            transition: all 1.5s ease;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+            position: relative;
+        }
+
+        body.accepted {
+            background: linear-gradient(135deg, #e1f5fe 0%, #b3e5fc 100%);
+        }
+
+        h1 {
+            color: #1565c0;
+            font-size: 2.8em;
+            margin-bottom: 35px;
+            text-shadow: 3px 3px 6px rgba(0,0,0,0.15);
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        
+        .buttons {
+            display: flex;
+            gap: 25px;
+            margin-top: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+            z-index: 10;
+        }
+        
+        button {
+            padding: 18px 35px;
+            font-size: 1.3em;
+            border: none;
+            border-radius: 60px;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            font-weight: 600;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        button::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        
+        button:hover::before {
+            left: 100%;
+        }
+        
+        #yes {
+            background: linear-gradient(45deg, #2196f3, #1976d2);
+            color: white;
+            transition: all 0.5s ease-out;
+        }
+        
+        #no {
+            background: linear-gradient(45deg, #f44336, #d32f2f);
+            color: white;
+            position: relative;
+        }
+        
+        #no:hover {
+            transform: scale(0.92) rotate(-2deg);
+        }
+        
+        #yes:hover {
+            transform: scale(1.08) rotate(1deg);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.4);
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        #message {
+            font-size: 2.2em;
+            color: #1565c0;
+            margin-top: 35px;
+            animation: bounce 2s infinite;
+            font-weight: 700;
+        }
+        
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateY(0); }
+            40% { transform: translateY(-15px); }
+            60% { transform: translateY(-8px); }
+        }
+        
+        .heart {
+            color: #1565c0;
+            font-size: 3.5em;
+            animation: float 4s ease-in-out infinite;
+            margin: 25px 0;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+        }
+        
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(5deg); }
+            50% { transform: translateY(-25px) rotate(0deg); }
+            75% { transform: translateY(-15px) rotate(-5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+        
+        .confetti {
+            position: fixed;
+            z-index: 1000;
+            pointer-events: none;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+            animation: confettiFall 3s linear forwards;
+        }
+        
+        @keyframes confettiFall {
+            0% {
+                transform: translateY(-10px) rotate(0deg);
+                opacity: 1;
+            }
+            100% {
+                transform: translateY(100vh) rotate(720deg);
+                opacity: 0;
+            }
+        }
+        
+        .mouse-heart {
+            position: fixed;
+            font-size: 20px;
+            color: #1565c0;
+            pointer-events: none;
+            z-index: 999;
+            animation: mouseHeartFloat 1s ease-out forwards;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+        }
+        
+        @keyframes mouseHeartFloat {
+            0% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+            100% {
+                opacity: 0;
+                transform: translateY(-30px) scale(1.2);
+            }
+        }
+
+        #youtube-player {
+            position: fixed;
+            top: -9999px;
+            left: -9999px;
+            width: 1px;
+            height: 1px;
+            pointer-events: none;
+            opacity: 0;
+        }
+        
+        #blocker {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(21, 101, 192, 0.9), rgba(33, 150, 243, 0.9));
+            z-index: 10000;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            backdrop-filter: blur(5px);
+        }
+        
+        #blocker-message {
+            background: white;
+            padding: 40px;
+            border-radius: 25px;
+            max-width: 85%;
+            font-size: 1.6em;
+            color: #1565c0;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            border: 3px solid #2196f3;
+        }
+        
+        .glow {
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+        
+        @keyframes glow {
+            from { box-shadow: 0 0 20px rgba(33, 150, 243, 0.5); }
+            to { box-shadow: 0 0 30px rgba(33, 150, 243, 0.8), 0 0 40px rgba(33, 150, 243, 0.3); }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            h1 {
+                font-size: 2em;
+                margin-bottom: 25px;
+            }
+            
+            .buttons {
+                gap: 15px;
+                margin-top: 20px;
+            }
+            
+            button {
+                padding: 15px 25px;
+                font-size: 1.1em;
+            }
+            
+            #message {
+                font-size: 1.8em;
+            }
+            
+            .heart {
+                font-size: 2.8em;
+            }
+            
+            #blocker-message {
+                padding: 25px;
+                font-size: 1.3em;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.6em;
+            }
+            
+            button {
+                padding: 12px 20px;
+                font-size: 1em;
+            }
+            
+            .buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            #message {
+                font-size: 1.5em;
+            }
+            
+            .heart {
+                font-size: 2.2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div id="youtube-player"></div>
+    
+    <div id="question">
+        <h1>Barışalım mı artık? 😊</h1>
+        <div class="heart">💙</div>
+        <div class="buttons">
+            <button id="yes">EVET 😊</button>
+            <button id="no">Hayır 😠</button>
+        </div>
+    </div>
+    
+    <div id="response" class="hidden">
+        <h1>Oleyyyyyyy 🎉</h1>
+        <div class="heart">💙</div>
+        <div id="message">Seviyom seni essek 😘</div>
+    </div>
+    
+    <div id="blocker">
+        <div id="blocker-message">
+            <h2>Kaçış yok! 😈</h2>
+            <p>Sayfayı kapatamazsın! Barışmadan gitmene izin vermeyeceğim!</p>
+            <p>Otomatik olarak EVET'e basılmış sayılıyorsun! 💙</p>
+        </div>
+    </div>
+
+    <script>
+        const yesBtn = document.getElementById('yes');
+        const noBtn = document.getElementById('no');
+        const questionDiv = document.getElementById('question');
+        const responseDiv = document.getElementById('response');
+        const blocker = document.getElementById('blocker');
+        let clickCount = 0;
+        
+        const noButtonTexts = [
+            "Hayır 😠",
+            "Emin misin? 🤨",
+            "Gerçekten emin misin? 😕",
+            "Son kez soruyorum! 😤",
+            "Cidden mi? 😯",
+            "Artık basmazsan olmaz! 😫",
+            "YETER! BAS ARTIK! 😭"
+        ];
+        
+        // YouTube API'yi yükle
+        var tag = document.createElement('script');
+        tag.src = "https://www.youtube.com/iframe_api";
+        var firstScriptTag = document.getElementsByTagName('script')[0];
+        firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+        var player;
+        function onYouTubeIframeAPIReady() {
+            player = new YT.Player('youtube-player', {
+                height: '1',
+                width: '1',
+                videoId: 'nyuo9-OjNNg',
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 0,
+                    'start': 46,
+                    'enablejsapi': 1,
+                    'playsinline': 1,
+                    'rel': 0,
+                    'showinfo': 0,
+                    'origin': window.location.origin
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange,
+                    'onError': onPlayerError
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            player.setVolume(100);
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data == YT.PlayerState.ENDED) {
+                player.seekTo(46);
+                player.playVideo();
+            }
+        }
+
+        function onPlayerError(event) {
+            console.error("YouTube Player Error:", event.data);
+            // Hata durumunda tekrar dene
+            setTimeout(() => {
+                startMusic();
+            }, 1000);
+        }
+
+        let musicStarted = false;
+
+        function startMusic() {
+            if (player && player.playVideo) {
+                try {
+                    player.seekTo(46);
+                    player.playVideo();
+                    
+                    // Müzik başlamadıysa tekrar dene
+                    setTimeout(() => {
+                        if (player.getPlayerState() !== 1) {
+                            player.playVideo();
+                        }
+                    }, 1000);
+                } catch (e) {
+                    console.error("Müzik başlatılamadı:", e);
+                }
+            }
+        }
+        
+        // Mouse takibi için değişkenler
+        let lastHeartTime = 0;
+        const heartInterval = 100; // Her 100ms'de bir kalp
+        
+        document.addEventListener('mousemove', function(e) {
+            const currentTime = Date.now();
+            if (currentTime - lastHeartTime > heartInterval) {
+                createMouseHeart(e.clientX, e.clientY);
+                lastHeartTime = currentTime;
+            }
+        });
+        
+        function createMouseHeart(x, y) {
+            const heart = document.createElement('div');
+            heart.className = 'mouse-heart';
+            heart.innerHTML = '💙';
+            heart.style.left = (x - 10) + 'px';
+            heart.style.top = (y - 10) + 'px';
+            
+            document.body.appendChild(heart);
+            
+            setTimeout(() => {
+                heart.remove();
+            }, 1000);
+        }
+        
+        window.addEventListener('beforeunload', function(e) {
+            if (!responseDiv.classList.contains('hidden')) return;
+            
+            e.preventDefault();
+            e.returnValue = 'Barışmadan gitmek yok!';
+            showBlocker();
+            forceYes();
+            return 'Barışmadan gitmek yok!';
+        });
+        
+        function showBlocker() {
+            blocker.style.display = 'flex';
+            setTimeout(() => {
+                blocker.style.display = 'none';
+            }, 3500);
+        }
+        
+        function forceYes() {
+            questionDiv.classList.add('hidden');
+            responseDiv.classList.remove('hidden');
+            document.body.classList.add('accepted');
+            startMusic();
+            
+            for(let i = 0; i < 350; i++) {
+                setTimeout(() => createConfetti(), i * 25);
+            }
+        }
+        
+        yesBtn.addEventListener('click', function() {
+            startMusic();
+            acceptLove();
+        });
+        
+        function acceptLove() {
+            questionDiv.classList.add('hidden');
+            responseDiv.classList.remove('hidden');
+            document.body.classList.add('accepted');
+            
+            for(let i = 0; i < 250; i++) {
+                setTimeout(() => createConfetti(), i * 40);
+            }
+        }
+        
+        noBtn.addEventListener('click', function() {
+            if (clickCount === 0) {
+                startMusic();
+            }
+            
+            clickCount++;
+            
+            if (clickCount < noButtonTexts.length) {
+                noBtn.textContent = noButtonTexts[clickCount];
+            } else {
+                noBtn.textContent = "ARTIK BASMAK ZORUNDASIN! 😫";
+                noBtn.style.display = 'none'; 
+            }
+            
+            const kodlamaDiliFSZ = parseFloat(getComputedStyle(yesBtn).fontSize);
+            const kodlamaDiliPDV = parseFloat(getComputedStyle(yesBtn).paddingTop);
+            const kodlamaDiliPDH = parseFloat(getComputedStyle(yesBtn).paddingLeft);
+            
+            yesBtn.style.fontSize = (kodlamaDiliFSZ * 1.35) + 'px';
+            yesBtn.style.padding = (kodlamaDiliPDV * 1.35) + 'px ' + (kodlamaDiliPDH * 1.35) + 'px';
+            yesBtn.classList.add('glow');
+            
+            if (clickCount < noButtonTexts.length) {
+                const maxX = window.innerWidth - noBtn.offsetWidth - 30;
+                const maxY = window.innerHeight - noBtn.offsetHeight - 30;
+                const x = Math.max(15, Math.random() * maxX);
+                const y = Math.max(15, Math.random() * maxY);
+                
+                noBtn.style.position = 'absolute';
+                noBtn.style.left = x + 'px';
+                noBtn.style.top = y + 'px';
+                noBtn.style.transform = `rotate(${Math.random() * 20 - 10}deg)`;
+            }
+            
+            if(clickCount >= noButtonTexts.length - 1) {
+                yesBtn.style.fontSize = '3.8em';
+                yesBtn.style.padding = '45px 90px';
+                yesBtn.textContent = "BAŞKA ÇAREN YOK! 😍 BAS ARTIK!";
+                
+                yesBtn.style.animation = 'shake 0.6s infinite';
+                const style = document.createElement('style');
+                style.innerHTML = `
+                    @keyframes shake {
+                        0% { transform: translateX(0) rotate(0deg); }
+                        25% { transform: translateX(-18px) rotate(-2deg); }
+                        50% { transform: translateX(18px) rotate(2deg); }
+                        75% { transform: translateX(-18px) rotate(-2deg); }
+                        100% { transform: translateX(0) rotate(0deg); }
+                    }
+                `;
+                document.head.appendChild(style);
+            }
+        });
+        
+        function createConfetti() {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti';
+            confetti.innerHTML = ['💙', '🌟', '✨', '💫', '⭐', '🔷', '🔹'][Math.floor(Math.random() * 7)];
+            confetti.style.fontSize = (Math.random() * 30 + 18) + 'px';
+            confetti.style.left = Math.random() * window.innerWidth + 'px';
+            confetti.style.top = '-50px';
+            confetti.style.opacity = Math.random() * 0.8 + 0.2;
+            
+            document.body.appendChild(confetti);
+            
+            setTimeout(() => {
+                confetti.remove();
+            }, 3000);
+        }
+        
+        window.addEventListener('load', function() {
+            document.body.style.opacity = '0';
+            setTimeout(() => {
+                document.body.style.transition = 'opacity 1s ease-in-out';
+                document.body.style.opacity = '1';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
