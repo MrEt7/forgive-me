@@ -12,7 +12,7 @@ Hayır desen bile kaçışın yok... Eninde sonunda EVET diyeceksin. 😈
 Bu mini web projesi, sevimli bir barışma teklifi sunuyor.  
 Kullanıcıya "Barışalım mı?" sorusu yöneltiliyor.  
 İki seçenek var: `EVET 😊` ve `Hayır 😠`  
-Ama... `Hayır` butonu her tıklamada kaçıyor, küçülüyor, kayboluyor ve sonunda seni **"Evet"e mahkum ediyor!** 😂
+Ama... `Hayır` butonu her tıklamada kaçıyor ve sonunda seni **"Evet"e mahkum ediyor!** 😂
 
 ---
 
